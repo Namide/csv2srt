@@ -1,6 +1,7 @@
 package;
 
 import flash.display.StageScaleMode;
+import flash.errors.Error;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
@@ -22,7 +23,6 @@ abstract Data(String)
 	var MS2 = "MS2";
 	
 	var TEXT = "TEXT";
-	//var DELIMITER = "[]";
 	
 	inline function new( s:String ){ this = s; }
 
@@ -75,7 +75,6 @@ class Process
 	var _fileRef:FileReference;
 	var _n:Int;
 	var _out:String;
-	var _error:String;
 	var _command:String;
 	
 	var _view:View;
@@ -92,12 +91,11 @@ class Process
         _fileRef.browse([new FileFilter("*.csv;*.txt", "*.csv;*.txt")]);
 		
 		_out = "";
-		_error = "";
 		_n = 1;
 	}
 	
-	function addIOError(e:IOErrorEvent) { _view.trace(e.text); /*_error += e.text + "\r\n";*/ }
-	function addSecurityError(e:SecurityErrorEvent) { _view.trace(e.text); /*_error += e.text + "\r\n";*/ }
+	function addIOError(e:IOErrorEvent) { _view.aff(e.text); }
+	function addSecurityError(e:SecurityErrorEvent) { _view.aff(e.text); }
 	
 	function onSelect(e:Event)
 	{
@@ -110,79 +108,100 @@ class Process
 	{
 		var s:String = _fileRef.data.toString();
 		
-		var a = s.split("\r\n");
+		_view.aff("Start process");
 		
+		var a = s.split("\r\n");
 		var aCommand = getACommand(_command);
 		
+		var l:Int = 0;
 		for (i in 0...a.length) {
-			var c = a[i];
-			analyseLine(c, i, aCommand);
+			
+			try
+			{
+				var c = a[i];
+				l += analyseLine(c, i, aCommand);
+			}
+			catch (e:Error)
+			{
+				return _view.aff("Error line " + (i + 1));
+			}
 		}
+		
+		_view.aff("Process finished for " + l + " lines");
+		_view.aff(" ");
 		
 		var fileRef = new FileReference();
 		fileRef.save(_out, _fileRef.name + ".srt" );
 	}
 	
-	function analyseLine(s:String, i:Int, aCommand:Array<{delimiter:Bool, ?type:Data, str:String}>) {
+	function analyseLine(s:String, i:Int, aCommand:Array<{delimiter:Bool, ?type:Data, str:String}>):Int {
 		
 		if (s == "")
-			return _view.trace("Empty line in " + i);
-			
-		/*var datas = s.split("|");
-		if (datas.length < 2)
-			return;
-			
-		
-		var dates = datas[0].split("-");
-		if (dates.length < 2)
-			return;*/
+		{
+			_view.aff("Empty line in " + (i + 1));
+			return 0;
+		}
 		
 		var sub:Subtitle = { h1:0, mn1:0, s1:0, ms1:0, h2:0, mn2:0, s2:0, ms2:0, text:"" };
 		
 		var cmd = aCommand.concat([]);
+		var delimiter = "";
 		while (cmd.length > 0)
 		{
 			
 			if ( cmd[0].delimiter )
 			{
-				var a = s.split(cmd[0].str);
+				delimiter = cmd[0].str;
+				var a = s.split(delimiter);
 				a.shift();
-				s = a.join(cmd[0].str);
+				s = a.join(delimiter);
 			}
-			else if(cmd.length > 1)
+			else
 			{
-				var a = s.split(cmd[1].str);
+				var data = s;
+				var type = cmd[0].type;
 				
-				switch (cmd[0].type)
+				if (cmd.length > 1)
 				{
-					case Data.H1 : sub.h1 = Std.parseInt(a[0]);
-					case Data.MN1 : sub.mn1 = Std.parseInt(a[0]);
-					case Data.S1 : sub.s1 = Std.parseInt(a[0]);
-					case Data.MS1 : sub.ms1 = Std.parseInt(a[0]);
-					case Data.H2 : sub.h2 = Std.parseInt(a[0]);
-					case Data.MN2 : sub.mn2 = Std.parseInt(a[0]);
-					case Data.S2 : sub.s2 = Std.parseInt(a[0]);
-					case Data.MS2 : sub.ms2 = Std.parseInt(a[0]);
-					case Data.TEXT : sub.text = a[0];
+					delimiter = cmd[1].str;
+					var a = s.split(delimiter);
+					data = a[0];
+					a.shift();
+					s = a.join(delimiter);
+					cmd.shift();
+				}
+				else
+				{
+					s = "";
 				}
 				
-				a.shift();
-				s = a.join(cmd[0].str);
+				switch (type)
+				{
+					case Data.H1 : 		sub.h1 = Std.parseInt(data);
+					case Data.MN1 : 	sub.mn1 = Std.parseInt(data);
+					case Data.S1 : 		sub.s1 = Std.parseInt(data);
+					case Data.MS1 : 	sub.ms1 = Std.parseInt(data);
+					case Data.H2 : 		sub.h2 = Std.parseInt(data);
+					case Data.MN2 : 	sub.mn2 = Std.parseInt(data);
+					case Data.S2 : 		sub.s2 = Std.parseInt(data);
+					case Data.MS2 : 	sub.ms2 = Std.parseInt(data);
+					case Data.TEXT : 	sub.text = data;
+				}
 			}
+			
 			cmd.shift();
 		}
 		
-		
 		_out += _n + "\r\n";
-		_out += i2s(sub.h1) + ":" + i2s(sub.mn1) + "," + i2s(sub.ms1) + " --> " + i2s(sub.h2) + ":" + i2s(sub.mn2) + "," + i2s(sub.ms2) + "\r\n";
-		
-		//_out += "00:" + dates[0] + ",000 --> 00:" + dates[1] + ",000\r\n";
+		_out += i2s(sub.h1) + ":" + i2s(sub.mn1) + ":" + i2s(sub.s1) + "," + i2s(sub.ms1, 3) + " --> " + i2s(sub.h2) + ":" + i2s(sub.mn2) + ":" + i2s(sub.s2) + "," + i2s(sub.ms2, 3) + "\r\n";
 		_out += sub.text + "\r\n\r\n";
 		
 		_n++;
+		
+		return 1;
 	}
 	
-	function getACommand ( command:String ) /*Array<{s:String, type:Data}>*/ {
+	function getACommand ( command:String ) {
 		
 		var list = [Data.H1, Data.MN1, Data.S1, Data.MS1, Data.H2, Data.MN2, Data.S2, Data.MS2, Data.TEXT];
 		var order:Array<Data> = [];
@@ -233,6 +252,12 @@ class Process
 		}
 		if (a.length > 2)
 			out.push( { delimiter:true, str:a[2] } );
+		
+		var info = "Command: \"";
+		for (d in out)
+			info += d.str;
+		info += "\"";
+		_view.aff(info);
 		
 		return out;
 	}

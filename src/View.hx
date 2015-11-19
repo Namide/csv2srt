@@ -15,22 +15,19 @@ import Process.Data;
  */
 class View extends Sprite
 {
-	//public static var MAIN:View;
-	
 	var _title:TextField;
 	var _legend:TextField;
 	var _input:TextField;
 	var _start:TextField;
 	var _button:Sprite;
 	var _output:TextField;
+	var _outputFormat:TextFormat;
 	
 	public var onClick:String->Void;
 	
 	public function new() 
 	{
-		//MAIN = this;
-		
-		var w = 400;
+		var w = 300;
 		var x = 20;
 		var h:Float;
 		var btnMargin = 4;
@@ -53,13 +50,13 @@ class View extends Sprite
 		
 		// ------------------------------
 		
-		format = new TextFormat("Courrier", 16, 0x000000, false);
+		format = new TextFormat("Courier", 16, 0x000000, false);
 		
 		_input = new TextField();
 		_input.x = x;
 		_input.y = _title.y + _title.height + x;
 		_input.type = TextFieldType.INPUT;
-		_input.text = Data.H1 + ":" + Data.MN1 + "-" + Data.H2 + ":" + Data.MN2 + " " + Data.TEXT;
+		_input.text = Data.MN1 + ":" + Data.S1 + "-" + Data.MN2 + ":" + Data.S2 + "\t" + Data.TEXT;
 		_input.setTextFormat(format);
 		_input.autoSize = TextFieldAutoSize.LEFT;
 		h = _input.height;
@@ -105,8 +102,6 @@ class View extends Sprite
 		_legend.width = w;
 		_legend.wordWrap = true;
 		
-		//_legend.text += "Legend\n\n";
-		
 		_legend.text += Data.H1 + " input hours\n";
 		_legend.text += Data.MN1 + " input minutes\n";
 		_legend.text += Data.S1 + " input seconds\n";
@@ -126,21 +121,24 @@ class View extends Sprite
 		
 		// ------------------------------
 		
-		format = new TextFormat("Courrier", 12, 0xFFFFFF, false);
+		_outputFormat = new TextFormat("Courier", 12, 0xFFFFFF, false);
 
 		_output = new TextField();
 		_output.x = _legend.x + _legend.width + x;
 		_output.y = _legend.y;
 		_output.width = w;
+		_output.height = w * 1.5;
 		_output.wordWrap = true;
 		_output.setTextFormat(format);
-		_output.backgroundColor = 0x000000;
+		_output.background = true;
+		_output.backgroundColor = 0x666666;
 		addChild(_output);
 	}
 	
-	public inline function trace(s:String) {
+	public inline function aff(s:String) {
 		
-		_output.appendText(s);// + "\n";
+		_output.appendText(s + "\n");// + "\n";
+		_output.setTextFormat(_outputFormat);
 		
 	}
 	

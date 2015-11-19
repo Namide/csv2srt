@@ -11,61 +11,95 @@
 	
 	<body>
 		
-		<h1>"Transformer" un classeur (format XSL, ODS, XSLS ou autre) en fichier SRT</h1>
+		<h1>"Transformer" une feuilles de calcul (XLS, ODS, XLSX ou autre) en fichier SRT</h1>
 		
 		<p>Les fichiers sont disponibles et à jour sur le dépôt <a href="https://github.com/Namide/csv2srt">GitHub.com/Namide/csv2srt</a></p>
 		
-		<p>Attention, le classeur (format XSL, ODS, XSLS ou autre) doit être formaté (surtout les timecodes) avant d'être exporté.</p>
+		<p>Attention, la feuilles de calcul (format XSL, ODS, XSLS ou autre) doit être formaté (surtout les timecodes) avant d'être exporté.</p>
 		
+		<p>Dans cette documentation nous allons en premier transformer notre feuille de calcul en un format ouvert exploitable par notre programme.</p>
 		
-		<h2>Du XSL, ODS, XSLS ou autre au CSV</h2>
+		<h2>De la feuille de calcul au format ouvert</h2>
+		
+		<h3>Avec Libre Office on obtient un CSV</h3>
 		
 		<ol>
 			<li>
 				Ouvrir le fichier avec le logiciel <a href="https://fr.libreoffice.org/download/libreoffice-fresh/">Libre Office</a>.
-				D'autres logiciels permettant des exports CSV maîtrisés peuvent être utilisés ;
 			</li>
 			<li>
 				Formatez votre document afin d'avoir une colonne de timecodes puis une colonne de sous-titres :
 				<ul>
 					<li>Les timecodes doivent être de la forme <code>hh:ss-hh:ss</code> sachant que le premier couple heures/secondes doit correspondre au début du sous-titre et le second à la fin. Par exemple <code>12:29-13:02</code> correspond à un sous-titre s'étalant du moment correspondant à 12 minutes et 29 secondes au moment correspondant à 13 minutes et 2 secondes ;
-					<br><img src="model/classeur-1.png" alt="Capture d'écran d'un classeur formaté">
+					<br><img src="model/tableur-bg.png" alt="Capture d'écran d'un classeur formaté">
 					<li>Il ne doit pas y avoir plus de deux colonne ;</li>
 					<li>Il ne faut pas de lignes ne comportant ni timecode ni sous-titres.</li>
 				</ul>
 			</li>
-			<li>Enregistrez sous (ou exporter selon le logiciel) le fichier au format CSV en respectant les paramètres ci-joint :
+			<li>Enregistrez sous le fichier au format CSV en respectant les paramètres ci-joint :
 				<ul>
 					<li>Utilisez un encodage UTF-8</li>
-					<li>Séparez les cellules avec un pipe (touche 6 d'un clavier sous Windows) : <code>|</code></li>
+					<li>Séparez les cellules avec une tabulation</li>
 					<li>N'utilisez aucun caractère (pas même des guillemets) pour encadrer les cellules ou les textes</li>
-					<li>N'ajoutez pas de caractère de formatage (tabulations, espaces pour aligner les cellules etc)</li>
+					<li>N'ajoutez pas de séparateur de texte</li>
 				</ul>
-				<img src="model/enregistrer-sous.png" alt="Capture d'écran : enregistrer sous"><br>
-				<img src="model/format-de-csv.png" alt="Capture d'écran du choix de formatage pour le CSV"><br>
-				<br>Le contenu du fichier CSV doit ressembler à ceci (quand il est ouvert avec un éditeur de code comme <a href="https://notepad-plus-plus.org/download">Notepad++</a> par exemple) :
-				<pre>29:42-29:49|sit amet, consectetur a
-29:50-29:53|Lorem ipsum dolor 
-29:54-30:01|dipiscing elit. Mauris vestibulum, odio vel aliq
-30:02-30:11|uam blandit, nunc augue auct
-30:12-30:18|or mauris, porttitor semper eros est 
-30:19-30:23|et lectus. Fusce eu suscipit erat. Nullam et tortor eget sapien malesuada efficitur
-30:24-30:29| eu at enim. Proin sed hendrerit tellus. Proi
-30:30-30:35|n at gravida elit. Etiam tortor risus, 
-30:36-30:41|ultrices ut varius et, pretium tempus libero. 
-30:42-30:46|Nulla rhoncus tortor vel finibus finibus. Fusce vitae nunc varius 
-30:47-30:52|nunc pretium dignissim sit amet ut tellus. 
-30:53-30:57|Donec eget fringilla justo. Nunc felis ipsum, 
-30:58-31:02|interdum at dolor vel, venenatis facilisis justo.
-31:03-31:04| In pharetra sodales ipsum, 
-31:05-31:13|at pharetra turpis vehicula porta. </pre>
+				<img src="model/libre-office-enregistrer-sous.png" alt="Capture d'écran : enregistrer sous"><br>
+				<img src="model/libre-office-format.png" alt="Capture d'écran du choix de formatage pour le CSV"></li>
+		</ol>
+		
+		
+		<h3>Avec Microsoft Excel sous Windows on obtient un TXT</h3>
+		
+		<ol>
+			<li>
+				Ouvrir le fichier avec le logiciel Microsof Excel <strong>sous Windows</strong>.
+			</li>
+			<li>
+				Formatez votre document afin d'avoir une colonne de timecodes puis une colonne de sous-titres :
+				<ul>
+					<li>Les timecodes doivent être de la forme <code>mn:ss-mn:ss</code> sachant que le premier couple minutes/secondes doit correspondre au début du sous-titre et le second à la fin. Par exemple <code>12:29-13:02</code> correspond à un sous-titre s'étalant du moment correspondant à 12 minutes et 29 secondes au moment correspondant à 13 minutes et 2 secondes ;
+					<br><img src="model/tableur-bg.png" alt="Capture d'écran d'un classeur formaté"></li>
+					<li>Il ne doit pas y avoir plus de deux colonne ;</li>
+					<li>Il ne faut pas de lignes ne comportant ni timecode ni sous-titres.</li>
+				</ul>
+			
+			<li>Enregistrez sous le fichier au format texte en suivant la procédure ci-dessous :
+				<ul>
+					<li>Sélectionner <code>Texte Unicode (*.txt)</code> parmis les types proposés</li>
+					<li>Rendez vous dans le menu <code>Option Web</code> par l'intermédiaire de l'onglet <code>Outils</code></li>
+					<li>Dans l'onglet <code>codage</code> sélectionnez le type de fichier <code>Unicode (UTF-8)</code></li>
+				</ul>
+				<img src="model/excel-enregistrer-sous-outil.png" alt="Capture d'écran : enregistrer sous"><br>
+				
+				
+				<img src="model/excel-enregistrer-sous-encodage.png" alt="Capture d'écran du choix de formatage pour le CSV">
 			</li>
 		</ol>
 		
 		
-		<h2>Du CSV au SRT</h2>
+		<h3>Vérifier le fichier obtenu</h3>
 		
-		<p>Il faudra utiliser le fichier <code>csv2srt.swf</code> et FlashPlayer à jour.
+		<p>Le contenu du fichier CSV ou TXT doit ressembler à ceci (quand il est ouvert avec un éditeur de code comme <a href="https://notepad-plus-plus.org/download">Notepad++</a> par exemple) :</p>
+		<pre>29:42-29:49	sit amet, consectetur a
+29:50-29:53	Lorem ipsum dolor 
+29:54-30:01	dipiscing elit. Mauris vestibulum, odio vel aliq
+30:02-30:11	uam blandit, nunc augue auct
+30:12-30:18	or mauris, porttitor semper eros est 
+30:19-30:23	et lectus. Fusce eu suscipit erat. Nullam et tortor eget sapien malesuada efficitur
+30:24-30:29	 eu at enim. Proin sed hendrerit tellus. Proi
+30:30-30:35	n at gravida elit. Etiam tortor risus, 
+30:36-30:41	ultrices ut varius et, pretium tempus libero. 
+30:42-30:46	Nulla rhoncus tortor vel finibus finibus. Fusce vitae nunc varius 
+30:47-30:52	nunc pretium dignissim sit amet ut tellus. 
+30:53-30:57	Donec eget fringilla justo. Nunc felis ipsum, 
+30:58-31:02	interdum at dolor vel, venenatis facilisis justo.
+31:03-31:04	 In pharetra sodales ipsum, 
+31:05-31:13	at pharetra turpis vehicula porta.</pre>
+		
+		
+		<h2>Du CSV ou TXT au SRT</h2>
+		
+		<p>Il faudra utiliser le programme <code>csv2srt.swf</code> et FlashPlayer à jour.
 		Si le fichier ne se lance pas en l'ouvrant, ouvrez le avec la machine virtuelle <a href="https://get.adobe.com/fr/flashplayer/">FlashPlayer</a>.</p>
 		
 		<ol>
@@ -73,19 +107,19 @@
 				Ouvrez le programme <a href="https://github.com/Namide/csv2srt/blob/master/bin/csv2srt.swf?raw=true">csv2srt.swf</a> ;<br>
 			</li>
 			<li>
-				Sélectionnez vos sous-titres au format <code>CSV</code> ;
-				<br><img src="model/ouvrir-csv.png" alt="Capture d'écran : ouvrir un CSV">
+				Sélectionnez vos sous-titres au format <code>CSV</code> ou <code>TXT</code> en cliquant sur le bouton <code>START</code> ;
+				<br><img src="model/csv2srt-bg.png" alt="Capture d'écran : ouvrir un CSV ou TXT">
 			</li>
 			<li>
 				Enregistrez le fichier <code>SRT</code> là où vous le souhaitez.
-				<br><img src="model/enregistrer-srt.png" alt="Capture d'écran : enregistrer un SRT">
+				<br><img src="model/csv2srt-enregistrer.png" alt="Capture d'écran : enregistrer un SRT">
 			</li>
 		</ol>
 		
 		
 		<h2>Que faire d'un SRT ?</h2>
 		
-		<p>Le fichier de sous-titre <code>SRT</code> est un format standard de sous-titre.
+		<p>Le fichier de sous-titre <code>SRT</code> est un format ouvert standard de sous-titre.
 		Il peut être appliqué à un fichier vidéo avec un lecteur adéquat (VLC par exemple).
 		Si vous souhaitez intégrer les sous-titre dans une animation avec After Effects vous pouvez utiliser ce <a href="https://github.com/Namide/AE-tools/blob/master/scripts/subtitles.jsx">script</a>.</p>
 		
